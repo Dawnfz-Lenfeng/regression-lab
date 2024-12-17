@@ -1,0 +1,55 @@
+---
+title: "数据预处理"
+author: "熊凌峰 20222201752"
+date: "2024-12-11"
+output: 
+  rmdformats::readthedown:
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+    gallery: false
+    highlight: tango
+---
+
+# 数据预处理
+
+## 加载必要的包
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(writexl)
+```
+
+## 读取原始数据
+
+```{r}
+# 读取原始数据
+data_raw <- read_excel("data.xlsx")
+head(data_raw)
+```
+
+## 年薪对数化处理
+
+为了改善数据分布的偏态性,对年薪进行对数变换:
+
+```{r}
+# 对年薪进行对数变换
+data_raw <- data_raw %>%
+  mutate(log_salary = log(年薪))
+
+# 查看转换后的基本统计信息
+summary(data_raw$log_salary)
+```
+
+## 保存处理后的数据
+
+```{r}
+# 保存处理后的数据
+write_xlsx(data_raw, "data.xlsx")
+```
+
+数据预处理完成。主要进行了以下操作:
+1. 读取原始Excel数据
+2. 对年薪进行对数变换,改善分布偏态性
+3. 保存处理后的数据到CSV文件,供后续分析使用
