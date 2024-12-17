@@ -1,0 +1,59 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+## 加载包
+```{r}
+library(readxl)
+```
+
+## 读取数据
+```{r}
+salary <- read_excel("data.xlsx")
+summary(salary)
+```
+
+## 处理数据
+```{r}
+### 首先写入自定义顺序
+
+ordered.item <- c("100以下", "100-499", "500以上")
+
+ordered.item <- factor(1:length(ordered.item), labels = ordered.item)
+
+### 然后对数据框df中的item字段进行自定义顺序排列
+
+salary$scale_factor <- factor(salary$scale, levels = levels(ordered.item), labels = c(1, 2, 3))
+
+### 重复以上步骤
+
+ordered.item <- c("经验不限", "1年以内", "1-3年", "3-5年", "5年以上")
+
+ordered.item <- factor(1:length(ordered.item), labels = ordered.item)
+
+salary$experience_factor <- factor(salary$working_experience, levels = levels(ordered.item), labels = c(1, 2, 3, 4, 5))
+
+ordered.item <- c("学历不限", "高中及以下", "大专", "本科", "研究生")
+
+ordered.item <- factor(1:length(ordered.item), labels = ordered.item)
+
+salary$education_factor <- factor(salary$education, levels = levels(ordered.item), labels = c(1, 2, 3, 4, 5))
+```
+
+```{r}
+### 将category和industry两列转换为哑变量
+
+salary <- cbind(salary, as.data.frame(model.matrix(~ category - 1, salary)))
+salary <- cbind(salary, as.data.frame(model.matrix(~ industry - 1, salary)))
+```
+```{r}
+salary$welfare_num <- as.numeric(salary$welfare)
+```
+```{r,message=FALSE,warning=FALSE,collapse=TRUE}
+y <- salary$income
+x <- salary[, 11:36]
+data <- cbind(y, x)
+myfit0 <- lm(y ~ ., data = data)
+summary(myfit0)
+```
