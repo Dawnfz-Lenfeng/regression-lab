@@ -2,7 +2,7 @@
 title: "Untitled"
 output: html_document
 ---
-
+# 回归分析
 ## 加载包
 ```{r}
 library(readxl)
@@ -18,27 +18,31 @@ summary(salary)
 ```{r}
 ### 首先写入自定义顺序
 
-ordered.item <- c("100以下", "100-499", "500以上")
+ordered_item <- c("100以下", "100-499", "500以上")
 
-ordered.item <- factor(1:length(ordered.item), labels = ordered.item)
+ordered_item <- factor(1:length(ordered_item), labels = ordered_item)
 
 ### 然后对数据框df中的item字段进行自定义顺序排列
 
-salary$scale_factor <- factor(salary$scale, levels = levels(ordered.item), labels = c(1, 2, 3))
+salary$scale_factor <- factor(
+  salary$scale,
+  levels = levels(ordered_item),
+  labels = c(1, 2, 3)
+)
 
 ### 重复以上步骤
 
-ordered.item <- c("经验不限", "1年以内", "1-3年", "3-5年", "5年以上")
+ordered_item <- c("经验不限", "1年以内", "1-3年", "3-5年", "5年以上")
 
-ordered.item <- factor(1:length(ordered.item), labels = ordered.item)
+ordered_item <- factor(1:length(ordered_item), labels = ordered_item)
 
-salary$experience_factor <- factor(salary$working_experience, levels = levels(ordered.item), labels = c(1, 2, 3, 4, 5))
+salary$experience_factor <- factor(salary$working_experience, levels = levels(ordered_item), labels = c(1, 2, 3, 4, 5))
 
-ordered.item <- c("学历不限", "高中及以下", "大专", "本科", "研究生")
+ordered_item <- c("学历不限", "高中及以下", "大专", "本科", "研究生")
 
-ordered.item <- factor(1:length(ordered.item), labels = ordered.item)
+ordered_item <- factor(1:length(ordered_item), labels = ordered_item)
 
-salary$education_factor <- factor(salary$education, levels = levels(ordered.item), labels = c(1, 2, 3, 4, 5))
+salary$education_factor <- factor(salary$education, levels = levels(ordered_item), labels = c(1, 2, 3, 4, 5))
 ```
 
 ```{r}
