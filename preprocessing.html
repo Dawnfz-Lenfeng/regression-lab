@@ -5,9 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="generator" content="pandoc" />
 
-        <meta name="author" content="熊凌峰 20222201752" />
+        <meta name="author" content="熊凌峰 20222201752 黄赫堂 2020201415" />
     
-        <meta name="date" content="2024-12-11" />
+        <meta name="date" content="2024-12-18" />
     
     <title>数据预处理</title>
 
@@ -1593,14 +1593,15 @@ margin-left: 0 !important;
       <li><a href="#加载必要的包" id="toc-加载必要的包">加载必要的包</a></li>
       <li><a href="#读取原始数据" id="toc-读取原始数据">读取原始数据</a></li>
       <li><a href="#年薪对数化处理" id="toc-年薪对数化处理">年薪对数化处理</a></li>
+      <li><a href="#更改职业地区类别公司行业与融资阶段" id="toc-更改职业地区类别公司行业与融资阶段">更改职业、地区类别、公司行业与融资阶段</a></li>
       <li><a href="#保存处理后的数据" id="toc-保存处理后的数据">保存处理后的数据</a></li>
       </ul></li>
       </ul>
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> 熊凌峰
-20222201752</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2024-12-11</p>
+20222201752 黄赫堂 2020201415</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2024-12-18</p>
           </div>
    </div>
      
@@ -1628,12 +1629,13 @@ margin-left: 0 !important;
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">library</span>(writexl)</span></code></pre></div>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">library</span>(writexl)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
 </div>
 <div id="读取原始数据" class="section level2">
 <h2>读取原始数据</h2>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># 读取原始数据</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>data_raw <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">&quot;data.xlsx&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>data_raw <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">&quot;data_origin.xlsx&quot;</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">head</span>(data_raw)</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 10
 ##   职位  位置    年薪 福利  已有工作经验 学历   公司行业        融资阶段 公司规模
@@ -1658,10 +1660,45 @@ margin-left: 0 !important;
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ## -0.6024  1.7918  2.0541  2.1651  2.4849  5.7236</code></pre>
 </div>
+<div id="更改职业地区类别公司行业与融资阶段" class="section level2">
+<h2>更改职业、地区类别、公司行业与融资阶段</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>data_raw <span class="ot">&lt;-</span> data_raw <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">mutate</span>(职业类别 <span class="ot">=</span> <span class="fu">case_when</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>    职业类别 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;技术与工程类&quot;</span>, <span class="st">&quot;商务与管理类&quot;</span>) <span class="sc">~</span> <span class="st">&quot;商务与工程类&quot;</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>    职业类别 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;媒体与创意类&quot;</span>, <span class="st">&quot;教育与培训类&quot;</span>) <span class="sc">~</span> <span class="st">&quot;媒体与培训类&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>    职业类别 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;销售与市场类&quot;</span>, <span class="st">&quot;服务与支持类&quot;</span>) <span class="sc">~</span> <span class="st">&quot;销售与服务类&quot;</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> 职业类别</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>  ))</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>data_raw <span class="ot">&lt;-</span> data_raw <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">mutate</span>(位置 <span class="ot">=</span> <span class="fu">case_when</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    位置 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;北京&quot;</span>, <span class="st">&quot;天津&quot;</span>, <span class="st">&quot;上海&quot;</span>, <span class="st">&quot;江苏&quot;</span>, <span class="st">&quot;浙江&quot;</span>, <span class="st">&quot;山东&quot;</span>, <span class="st">&quot;福建&quot;</span>, <span class="st">&quot;台湾&quot;</span>) <span class="sc">~</span> <span class="st">&quot;东部地区&quot;</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    位置 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;湖北&quot;</span>, <span class="st">&quot;湖南&quot;</span>, <span class="st">&quot;安徽&quot;</span>, <span class="st">&quot;江西&quot;</span>, <span class="st">&quot;河北&quot;</span>, <span class="st">&quot;内蒙古&quot;</span>, <span class="st">&quot;河南&quot;</span>, <span class="st">&quot;山西&quot;</span>) <span class="sc">~</span> <span class="st">&quot;中部地区&quot;</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    位置 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;新疆&quot;</span>, <span class="st">&quot;西藏&quot;</span>, <span class="st">&quot;青海&quot;</span>, <span class="st">&quot;四川&quot;</span>, <span class="st">&quot;云南&quot;</span>, <span class="st">&quot;陕西&quot;</span>, <span class="st">&quot;重庆&quot;</span>, <span class="st">&quot;甘肃&quot;</span>, <span class="st">&quot;宁夏&quot;</span>) <span class="sc">~</span> <span class="st">&quot;西部地区&quot;</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>    位置 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;贵州&quot;</span>, <span class="st">&quot;广西&quot;</span>, <span class="st">&quot;广东&quot;</span>, <span class="st">&quot;深圳&quot;</span>, <span class="st">&quot;海南&quot;</span>) <span class="sc">~</span> <span class="st">&quot;南部地区&quot;</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>    位置 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;黑龙江&quot;</span>, <span class="st">&quot;吉林&quot;</span>, <span class="st">&quot;辽宁&quot;</span>) <span class="sc">~</span> <span class="st">&quot;东北地区&quot;</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> 位置</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  ))</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>data_raw <span class="ot">&lt;-</span> data_raw <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">mutate</span>(公司行业 <span class="ot">=</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>    公司行业 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;互联网/IT/电子/通信&quot;</span>, <span class="st">&quot;金融&quot;</span>) <span class="sc">~</span> <span class="st">&quot;金融互联网&quot;</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    公司行业 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;广告/传媒/文化/体育&quot;</span>, <span class="st">&quot;教育培训&quot;</span>) <span class="sc">~</span> <span class="st">&quot;媒体教培&quot;</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    公司行业 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;制药/医疗&quot;</span>, <span class="st">&quot;交通/物流/贸易/零售&quot;</span>, <span class="st">&quot;政府/非盈利机构/其他&quot;</span>, <span class="st">&quot;能源/化工/环保&quot;</span>) <span class="sc">~</span> <span class="st">&quot;公共服务&quot;</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>    公司行业 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;专业服务&quot;</span>, <span class="st">&quot;房地产/建筑&quot;</span>, <span class="st">&quot;服务业&quot;</span>, <span class="st">&quot;消费品&quot;</span>) <span class="sc">~</span> <span class="st">&quot;商业服务&quot;</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>    公司行业 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;汽车&quot;</span>, <span class="st">&quot;机械/制造&quot;</span>) <span class="sc">~</span> <span class="st">&quot;机械制造&quot;</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> 公司行业</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>  ))</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>data_raw <span class="ot">&lt;-</span> data_raw <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">mutate</span>(融资阶段 <span class="ot">=</span> <span class="fu">case_when</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>    融资阶段 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;A轮&quot;</span>, <span class="st">&quot;B轮&quot;</span>, <span class="st">&quot;C轮&quot;</span>, <span class="st">&quot;D轮及以上&quot;</span>) <span class="sc">~</span> <span class="st">&quot;正在融资&quot;</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>    融资阶段 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;天使轮&quot;</span>, <span class="st">&quot;未融资&quot;</span>) <span class="sc">~</span> <span class="st">&quot;准备融资&quot;</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>    融资阶段 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;制药/医疗&quot;</span>, <span class="st">&quot;交通/物流/贸易/零售&quot;</span>, <span class="st">&quot;政府/非盈利机构/其他&quot;</span>, <span class="st">&quot;能源/化工/环保&quot;</span>) <span class="sc">~</span> <span class="st">&quot;公共服务&quot;</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> 融资阶段</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>  ))</span></code></pre></div>
+</div>
 <div id="保存处理后的数据" class="section level2">
 <h2>保存处理后的数据</h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># 保存处理后的数据</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">write_xlsx</span>(data_raw, <span class="st">&quot;data.xlsx&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># 保存处理后的数据</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">write_xlsx</span>(data_raw, <span class="st">&quot;data.xlsx&quot;</span>)</span></code></pre></div>
 <p>数据预处理完成。主要进行了以下操作: 1. 读取原始Excel数据 2.
 对年薪进行对数变换,改善分布偏态性 3.
 保存处理后的数据到CSV文件,供后续分析使用</p>
