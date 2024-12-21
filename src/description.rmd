@@ -2,7 +2,16 @@
 
 
 ## Settings
+加载必要的包
+```{r}
+library(ggplot2)
+library(readxl)
+library(patchwork)
+library(tidyverse)
+library(showtext)
+```
 
+图像设置：
 ```{r}
 library(ggplot2)
 
