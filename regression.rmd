@@ -23,6 +23,12 @@ library(readxl)
 library(dplyr)
 library(writexl)
 library(StepReg)
+library(lmtest)
+library(ggplot2)
+library(leaps)
+library(car)
+library(lmtest)
+library(DT)
 ```
 
 ## 读取数据
@@ -37,8 +43,7 @@ summary(salary)
 
 
 ```{r}
-### 公司规模哑变量赋值
-
+# 公司规模哑变量赋值
 df1 <- data.frame(salary$公司规模)
 df1 <- factor(df1, levels = c("100以下", "100-499", "500以上"))
 dummy_scale <- model.matrix(~ salary$公司规模 - 1, data = salary)
@@ -47,8 +52,7 @@ salary <- subset(salary, select = -公司规模)
 ```
 
 ```{r}
-### 已有工作经验哑变量赋
-
+# 已有工作经验哑变量赋
 df2 <- data.frame(salary$已有工作经验)
 df2 <- factor(df2, levels = c("1年以内", "1-3年", "3-5年", "5年以上", "经验不限"))
 dummy_experience <- model.matrix(~ salary$已有工作经验 - 1, data = salary)
@@ -58,8 +62,7 @@ salary <- subset(salary, select = -已有工作经验)
 
 
 ```{r}
-### 学历哑变量赋值
-
+# 学历哑变量赋值
 df3 <- data.frame(salary$学历)
 df3 <- factor(df3, levels = c("本科", "高中及以下", "大专", "研究生", "学历不限"))
 dummy_degree <- model.matrix(~ salary$学历 - 1, data = salary)
@@ -68,8 +71,7 @@ salary <- subset(salary, select = -学历)
 ```
 
 ```{r}
-### 融资阶段哑变量赋值
-
+# 融资阶段哑变量赋值
 df4 <- data.frame(salary$学历)
 df4 <- factor(df4, levels = c("不需要融资", "准备融资", "正在融资", "已上市", "未知"))
 dummy_phase <- model.matrix(~ salary$融资阶段 - 1, data = salary)
@@ -78,8 +80,7 @@ salary <- subset(salary, select = -融资阶段)
 ```
 
 ```{r}
-### 福利哑变量赋值
-
+# 福利哑变量赋值
 salary <- salary %>%
   mutate(福利 = case_when(
     福利 == TRUE ~ 1,
@@ -90,8 +91,7 @@ salary$福利 <- as.integer(salary$福利)
 ```
 
 ```{r}
-### 位置哑变量赋值
-
+# 位置哑变量赋值
 df5 <- data.frame(salary$位置)
 df5 <- factor(df5, levels = c("东部地区", "中部地区", "南部地区", "西部地区", "未知"))
 dummy_location <- model.matrix(~ salary$位置 - 1, data = salary)
@@ -100,8 +100,7 @@ salary <- subset(salary, select = -位置)
 ```
 
 ```{r}
-### 公司行业哑变量赋值
-
+# 公司行业哑变量赋值
 df6 <- data.frame(salary$公司行业)
 df6 <- factor(df6, levels = c("金融互联网", "公共服务", "机械制造", "媒体教培", "商业服务"))
 dummy_industry <- model.matrix(~ salary$公司行业 - 1, data = salary)
@@ -110,12 +109,12 @@ salary <- subset(salary, select = -公司行业)
 ```
 
 ```{r}
-### 职业类别哑变量赋值
-
+# 职业类别哑变量赋值
 df7 <- data.frame(salary$公司行业)
 df7 <- factor(df7, levels = c("商务与工程类", "法务与咨询类", "媒体与培训类", "销售与服务类", "其他职业类"))
 dummy_category <- model.matrix(~ salary$职业类别 - 1, data = salary)
-### 处理表格
+
+# 处理表格
 salary <- subset(salary, select = -职业类别)
 salary <- subset(salary, select = -职位)
 salary <- subset(salary, select = -年薪)
@@ -160,7 +159,7 @@ par(mfrow = c(1, 1))
 ```{r,message=FALSE,warning=FALSE,collapse=TRUE}
 p <- rep(1, ncol(salary)) # 初始化
 
-for (i in 1:length(p)) {
+for (i in seq_along(p)) {
   if (colnames(salary)[i] != "log_salary") {
     p[i] <- cor.test(as.numeric(salary[, i]), abs(myfit0$residuals))$p.value
   }
@@ -185,7 +184,6 @@ p <= 0.1
 $$H_0:\{模型myfit0不存在异方差现象\}$$
 
 ```{r,message=FALSE,warning=FALSE,collapse=TRUE}
-library(lmtest)
 bptest(myfit0)
 ```
 
@@ -204,7 +202,6 @@ n <- nrow(salary)
 e_i1 <- myfit0$residuals[1:(n - 1)]
 e_i2 <- myfit0$residuals[2:n]
 
-library(ggplot2)
 ggplot() +
   geom_point(mapping = aes(x = e_i1, y = e_i2)) +
   geom_vline(xintercept = 0, col = "red", alpha = 0.4) +
@@ -232,10 +229,9 @@ cor(salary)
 ```
 
 ```{r,message=FALSE,warning=FALSE,collapse=TRUE}
-library(car)
-alias(myfit0, complete = T) # 完全多重共线性
+alias(myfit0, complete = TRUE) # 完全多重共线性
 
-sort(vif(myfit0), decreasing = T) # 多重共线性
+sort(vif(myfit0), decreasing = TRUE) # 多重共线性
 
 mean(vif(myfit0))
 ```
@@ -259,7 +255,6 @@ $\bar{VIF}$略大于1，说明存在多重共线性。
 
 
 ```{r}
-library(leaps)
 salary.r2adj <- leaps(x = salary[, -2], y = salary[, 2], method = "adjr2")
 result <- cbind(salary.r2adj$which, adjRsq = salary.r2adj$adjr2)
 optimal_model_index <- which.max(salary.r2adj$adjr2)
@@ -268,73 +263,76 @@ print(optimal_model)
 ```
 最优模型包含所有变量
 
+### AIC、BIC、$C_p$准则
 
-### AIC和BIC准则
+首先编写所需要的函数：
 
+```{r,message=FALSE,warning=FALSE,collapse=TRUE,cache=TRUE}
+select_model <- function(data, metric, y_name, strategy = "bidirection") {
+  # data0: 数据框
+  # metric: 模型选择准则 ("AIC", "BIC", "CP")
+  # y_name: 因变量名称
+  # strategy: 回归策略 ("forward", "backward", "bidirection", "subset")
 
-```{r}
-x <- salary[, -2]
-y <- salary[, 2]
-salary.aic <- salary.bic <- NULL
-for (j in 1:nrow(salary.r2adj$which)) {
-  x.subset <- as.matrix(x[salary.r2adj$which[j, ]])
-  lm.subset <- lm(y ~ x.subset)
-  salary.aic <- c(salary.aic, AIC(lm.subset))
-  salary.bic <- c(salary.bic, BIC(lm.subset))
+  # 获取所有自变量名称
+  total_variate <- setdiff(colnames(data), y_name)
+  data_ <- data.frame(data)
+
+  # 使用stepwise函数进行变量选择
+  fit <- stepwise(
+    formula = as.formula(paste(y_name, "~ .")),
+    data = data_,
+    type = "linear",
+    strategy = strategy,
+    metric = metric
+  )
+
+  # 从lm模型中提取变量
+  corrected_variable_names <- gsub(
+    "\\.", "-", fit[["variables"]][["Variable_name"]]
+  )
+  model_terms <- corrected_variable_names[-1]
+
+  # 创建结果数据框
+  result <- data.frame(
+    variable = total_variate,
+    selected = total_variate %in% model_terms
+  )
+
+  return(list(
+    model = fit, # stepwise的完整结果
+    selected_vars = model_terms, # 选中的变量
+    selection_result = result # 变量选择结果表
+  ))
 }
-# 找到最小 AIC 值的索引
-min_aic_index <- which.min(salary.aic)
-
-# 提取最小 AIC 值对应的自变量组合
-min_aic_combination <- salary.r2adj$which[min_aic_index, ]
-
-# 获取最小 AIC 值
-min_aic_value <- salary.aic[min_aic_index]
-
-# 输出最小 AIC 值及其对应的自变量组合
-cat("最小 AIC 值：", min_aic_value, "\n")
-cat("最小 AIC 值对应的自变量组合：\n")
-print(min_aic_combination)
-
-# 找到最小 BIC 值的索引
-min_bic_index <- which.min(salary.bic)
-
-# 提取最小 BIC 值对应的自变量组合
-min_bic_combination <- salary.r2adj$which[min_bic_index, ]
-
-# 获取最小 BIC 值
-min_bic_value <- salary.bic[min_bic_index]
-
-# 输出最小 BIC 值及其对应的自变量组合
-cat("最小 BIC 值：", min_bic_value, "\n")
-cat("最小 BIC 值对应的自变量组合：\n")
-print(min_bic_combination)
-```
-最优模型包含所有变量
-
-
-### $C_p$准则
-
-
-```{r}
-salary.cp <- leaps(x = salary[, -2], y = salary[, 2], method = "Cp")
-
-# 找到最小 Cp 值的索引
-min_cp_index <- which.min(salary.cp$Cp)
-
-# 提取最小 Cp 值所在的自变量组合
-min_cp_combination <- salary.cp$which[min_cp_index, ]
-
-# 获取最小 Cp 值
-min_cp_value <- salary.cp$Cp[min_cp_index]
-
-# 输出最小 Cp 值及其对应的自变量组合
-cat("最小 Cp 值：", min_cp_value, "\n")
-cat("最小 Cp 值对应的自变量组合：\n")
-print(min_cp_combination)
 ```
 
-最优模型包含所有变量
+
+AIC、BIC、$C_p$准则下的变量选择：
+
+```{r,message=FALSE,warning=FALSE,collapse=TRUE,cache=TRUE}
+aic_result <- select_model(salary, metric = "AIC", y_name = "log_salary")
+bic_result <- select_model(salary, metric = "BIC", y_name = "log_salary")
+cp_result <- select_model(salary, metric = "CP", y_name = "log_salary")
+```
+
+比较三种准则下的变量选择结果：
+
+```{r,message=FALSE,warning=FALSE,collapse=TRUE,cache=TRUE}
+# 创建比较表
+comparison <- data.frame(
+  variable = aic_result$selection_result$variable,
+  AIC = aic_result$selection_result$selected,
+  BIC = bic_result$selection_result$selected,
+  CP = cp_result$selection_result$selected
+)
+
+# 显示比较结果
+datatable(comparison,
+  caption = "三种准则变量选择结果比较",
+  options = list(scrollX = TRUE)
+)
+```
 
 
 ### 对比
@@ -347,7 +345,7 @@ print(min_cp_combination)
 
 
 ```{r,message=FALSE,warning=FALSE,collapse=TRUE}
-sort(vif(myfit0), decreasing = T) # 多重共线性
+sort(vif(myfit0), decreasing = TRUE) # 多重共线性
 
 mean(vif(myfit0))
 ```
@@ -366,7 +364,6 @@ mean(vif(myfit0))
 $$H_0:\{模型myfit0不存在异方差现象\}$$
 
 ```{r,message=FALSE,warning=FALSE,collapse=TRUE}
-library(lmtest)
 bptest(myfit0)
 ```
 
@@ -413,163 +410,6 @@ ggplot() +
 
 至此，我们建立了不存在**自相关性**、不存在**异方差性**、不存在**多重共线性**且残差符合**正态性**假设的回归模型。
 
-
-## 稳定性检测
-
-
-下面，我们使用使用**Bootstrap法**检验不同法则下，所选变量以及模型的稳定性。
-
-
-### 编写函数
-
-
-```{r,message=FALSE,warning=FALSE,collapse=TRUE,cache=TRUE}
-startBootstrap <- function(B, data0, select, Yname, selection, Choose) {
-  # B为Bootstrap的次数；
-  # select为筛选变量的方法；
-  # data为数据表
-  # Yname为Y变量名；
-  # selection为回归方向
-  # Choose为选择模型的标准
-
-  TotalVariate <- colnames(data0)[colnames(data0) != Yname] # 所有X变量
-  result <- data.frame(matrix(nrow = 0, ncol = ncol(data0))) # 初始化result表，每一列为一个变量，每一行为一个模型，最后一列n记录频数
-
-  n <- nrow(data0) # 样本量
-
-  for (i in 1:B) {
-    Asample_tmp <- sample(x = 1:n, size = n, replace = T) # 有放回重抽样
-    Asample <- data0[Asample_tmp, ] # 重抽样数据集
-    Afit <- stepwise(data = Asample, y = Yname, selection = selection, select = select, Choose = Choose)
-
-    chosenVariate <- Afit$variate[-1] # 选出的变量，除去常数项
-
-    variate_tmp <- is.element(TotalVariate, chosenVariate) # 所选变量的位置
-
-    model_tmp <- which(apply(X = result[, -ncol(result)], MARGIN = 1, FUN = function(x) {
-      sum(x != variate_tmp)
-    }) == 0) # 若该模型出现过，返回所在行标
-
-    if (setequal(model_tmp, integer(0))) {
-      # 如果model_tmp是integer(0)，即不存在该模型
-
-      result <- rbind(result, c(variate_tmp, 1)) # 增加该模型的记录
-    } else {
-      result[model_tmp, ncol(result)] <- result[model_tmp, ncol(result)] + 1 # 记录+1
-    }
-  }
-
-  colnames(result) <- c(TotalVariate, "n")
-
-  result <- result[order(result[, ncol(result)], decreasing = T), ] # 按模型出现频数排序
-
-  return(result)
-}
-```
-
-
-### AIC法则
-
-
-```{r,message=FALSE,warning=FALSE,collapse=TRUE,cache=TRUE}
-set.seed(13)
-
-AICmodels <- startBootstrap(B = 1000, data0 = salary, select = "AIC", Yname = "log_salary", selection = "bidirection", Choose = "AIC")
-
-# 模型的分布为（根据所选变量分）
-AICtable <- data.frame(
-  frequncy = as.vector(table(rowSums(AICmodels[, -ncol(AICmodels)]))) / 1000,
-  complexity = as.numeric(names(table(rowSums(AICmodels[, -ncol(AICmodels)]))))
-)
-
-ggplot(data = AICtable) +
-  geom_histogram(mapping = aes(x = complexity, y = frequncy), stat = "identity", col = "black", fill = "lightblue") +
-  theme_classic() +
-  labs(title = "AIC选择模型分布图") +
-  theme(plot.title = element_text(hjust = 0.5))
-
-
-library(DT)
-datatable(AICmodels, width = "100%", options = list(scrollX = T))
-```
-
-
-
-```{r,message=FALSE,warning=FALSE,collapse=TRUE,cache=TRUE}
-variate_percent_AIC <- colSums(AICmodels[, -ncol(AICmodels)]) / nrow(AICmodels)
-
-datatable(data.frame(选入频率 = variate_percent_AIC))
-```
-
-
-### BIC法则
-
-
-```{r,message=FALSE,warning=FALSE,collapse=TRUE,cache=TRUE}
-set.seed(13)
-
-BICmodels <- startBootstrap(B = 1000, data0 = salary, select = "BIC", Yname = "log_salary", selection = "bidirection", Choose = "BIC")
-
-# 模型的分布为（根据所选变量分）
-BICtable <- data.frame(
-  frequncy = as.vector(table(rowSums(BICmodels[, -ncol(BICmodels)]))) / 1000,
-  complexity = as.numeric(names(table(rowSums(BICmodels[, -ncol(BICmodels)]))))
-)
-
-ggplot(data = BICtable) +
-  geom_histogram(mapping = aes(x = complexity, y = frequncy), stat = "identity", col = "black", fill = "lightblue") +
-  theme_classic() +
-  labs(title = "BIC选择模型分布图") +
-  theme(plot.title = element_text(hjust = 0.5))
-
-
-datatable(BICmodels, width = "100%", options = list(scrollX = T))
-```
-
-
-
-```{r,message=FALSE,warning=FALSE,collapse=TRUE,cache=TRUE}
-variate_percent_BIC <- colSums(BICmodels[, -ncol(BICmodels)]) / nrow(BICmodels)
-
-datatable(data.frame(选入频率 = variate_percent_BIC))
-```
-
-### $C_p$法则
-
-
-```{r,message=FALSE,warning=FALSE,collapse=TRUE,cache=TRUE}
-set.seed(13)
-
-CPmodels <- startBootstrap(B = 1000, data0 = salary, select = "CP", Yname = "log_salary", selection = "bidirection", Choose = "CP")
-
-# 模型的分布为（根据所选变量分）
-CPtable <- data.frame(
-  frequncy = as.vector(table(rowSums(CPmodels[, -ncol(CPmodels)]))) / 1000,
-  complexity = as.numeric(names(table(rowSums(CPmodels[, -ncol(CPmodels)]))))
-)
-
-ggplot(data = CPtable) +
-  geom_histogram(mapping = aes(x = complexity, y = frequncy), stat = "identity", col = "black", fill = "lightblue") +
-  theme_classic() +
-  labs(title = "CP选择模型分布图") +
-  theme(plot.title = element_text(hjust = 0.5))
-
-datatable(CPmodels, width = "100%", options = list(scrollX = T))
-```
-
-
-
-```{r,message=FALSE,warning=FALSE,collapse=TRUE,cache=TRUE}
-variate_percent_CP <- colSums(CPmodels[, -ncol(CPmodels)]) / nrow(CPmodels)
-
-datatable(data.frame(选入频率 = variate_percent_CP))
-```
-
-
-可见：
-
-1. **BIC法则**下模型的分布更为集中，更稳定；
-2. 我们所确定的模型的变量入选频率均为前几，较为稳定。
 
 ## 参考
 
