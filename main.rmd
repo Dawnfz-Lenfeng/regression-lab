@@ -1,0 +1,32 @@
+---
+title: "职位薪资影响因素分析"
+author: "熊凌峰 20222201752 黄赫堂 2020201415"
+date: "`r Sys.Date()`"
+output: 
+  rmdformats::readthedown:
+    toc_depth: 6
+    toc_float: 
+      collapsed: false
+      smooth_scroll: true
+    number_sections: true
+    code_folding: show
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+    gallery: false
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_knit$set(root.dir = getwd())
+```
+
+```{r child='src/preprocessing.rmd'}
+```
+
+```{r child='src/description.rmd'}
+```
+
+```{r child='src/regression.rmd'}
+``` 

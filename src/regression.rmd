@@ -1,22 +1,5 @@
----
-title: "回归分析"
-author: "黄赫堂 2020201415"
-date: "2024-12-18"
-output: 
-  rmdformats::readthedown:
-    toc_depth: 6
-    toc_float: 
-      collapsed: false  # 展开所有目录项
-      smooth_scroll: true  # 平滑滚动效果
-    number_sections: true
-    code_folding: show  # 代码块可折叠
-    self_contained: true
-    thumbnails: false
-    lightbox: true
-    gallery: false
-    highlight: tango
----
 # 回归分析
+
 ## 加载包
 ```{r}
 library(readxl)
@@ -35,7 +18,7 @@ library(DT)
 
 
 ```{r}
-salary <- read_excel("data.xlsx")
+salary <- read_excel("data/data.xlsx")
 summary(salary)
 ```
 
