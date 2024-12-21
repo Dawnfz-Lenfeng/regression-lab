@@ -1676,7 +1676,7 @@ margin-left: 0 !important;
 <span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    位置 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;新疆&quot;</span>, <span class="st">&quot;西藏&quot;</span>, <span class="st">&quot;青海&quot;</span>, <span class="st">&quot;四川&quot;</span>, <span class="st">&quot;云南&quot;</span>, <span class="st">&quot;陕西&quot;</span>, <span class="st">&quot;重庆&quot;</span>, <span class="st">&quot;甘肃&quot;</span>, <span class="st">&quot;宁夏&quot;</span>) <span class="sc">~</span> <span class="st">&quot;西部地区&quot;</span>,</span>
 <span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>    位置 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;贵州&quot;</span>, <span class="st">&quot;广西&quot;</span>, <span class="st">&quot;广东&quot;</span>, <span class="st">&quot;深圳&quot;</span>, <span class="st">&quot;海南&quot;</span>) <span class="sc">~</span> <span class="st">&quot;南部地区&quot;</span>,</span>
 <span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>    位置 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;黑龙江&quot;</span>, <span class="st">&quot;吉林&quot;</span>, <span class="st">&quot;辽宁&quot;</span>) <span class="sc">~</span> <span class="st">&quot;东北地区&quot;</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> 位置</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;南部地区&quot;</span></span>
 <span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  ))</span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>data_raw <span class="ot">&lt;-</span> data_raw <span class="sc">%&gt;%</span></span>
 <span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">mutate</span>(公司行业 <span class="ot">=</span> <span class="fu">case_when</span>(</span>
@@ -1691,9 +1691,8 @@ margin-left: 0 !important;
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">mutate</span>(融资阶段 <span class="ot">=</span> <span class="fu">case_when</span>(</span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>    融资阶段 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;A轮&quot;</span>, <span class="st">&quot;B轮&quot;</span>, <span class="st">&quot;C轮&quot;</span>, <span class="st">&quot;D轮及以上&quot;</span>) <span class="sc">~</span> <span class="st">&quot;正在融资&quot;</span>,</span>
 <span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>    融资阶段 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;天使轮&quot;</span>, <span class="st">&quot;未融资&quot;</span>) <span class="sc">~</span> <span class="st">&quot;准备融资&quot;</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>    融资阶段 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;制药/医疗&quot;</span>, <span class="st">&quot;交通/物流/贸易/零售&quot;</span>, <span class="st">&quot;政府/非盈利机构/其他&quot;</span>, <span class="st">&quot;能源/化工/环保&quot;</span>) <span class="sc">~</span> <span class="st">&quot;公共服务&quot;</span>,</span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> 融资阶段</span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>  ))</span></code></pre></div>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> 融资阶段</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>  ))</span></code></pre></div>
 </div>
 <div id="保存处理后的数据" class="section level2">
 <h2>保存处理后的数据</h2>
