@@ -99,54 +99,11 @@ showtext_auto()
 font_add(family = "SimHei", regular = "simhei.ttf")
 ```
 
-## 数据读取与清理
-
-### 读取数据
+## 数据读取
 
 ```{r}
 data_raw <- read_excel("data/data.xlsx")
 head(data_raw)
-```
-
-### 数据清理
-
-```{r}
-# 统计每列缺失值
-missing_summary <- colSums(is.na(data_raw))
-print(missing_summary)
-
-# 检查空值和空字符串的函数
-check_empty <- function(data_raw) {
-  # 创建一个空的结果向量
-  empty_counts <- numeric(ncol(data_raw))
-  names(empty_counts) <- names(data_raw)
-
-  # 对每一列进行检查
-  for (col in names(data_raw)) {
-    # 统计 NA 或空字符串或只包含空格的情况
-    empty_counts[col] <- sum(
-      is.na(data_raw[[col]]) | # NA值
-        data_raw[[col]] == "" | # 空字符串
-        trimws(data_raw[[col]]) == "" | # 只包含空格的字符串
-        is.null(data_raw[[col]]) # NULL值
-    )
-  }
-
-  return(empty_counts)
-}
-
-# 使用函数检查
-empty_summary <- check_empty(data_raw)
-print(empty_summary)
-
-# 统计包含任何空值的行数
-rows_with_empty <- sum(apply(data_raw, 1, function(row) {
-  any(is.na(row) | row == "" | trimws(row) == "" | is.null(row))
-}))
-
-# 输出统计信息
-print(paste("总行数:", nrow(data_raw)))
-print(paste("包含空值的行数:", rows_with_empty))
 ```
 
 ## 因变量描述性统计：年薪的处理
@@ -441,9 +398,6 @@ p_qq <- ggplot(data_raw, aes(sample = log_salary)) +
   )
 
 print(p_qq)
-
-# 保存图像
-# ggsave("log_salary_qqplot.png", plot = p_qq, height = 6, width = 6, dpi = 300)
 ```
 
 这张QQ图用于检验对数变换后的年薪分布是否符合正态分布。从图中可以观察到，数据点在大部分范围内与虚线（理想正态分布线）较为接近，尤其是在中位数附近，数据点分布较为密集且贴合。这表明对数年薪的数据分布基本符合正态分布假设。
@@ -577,9 +531,6 @@ p <- ggplot(
 
 # 打印图像到绘图窗口
 print(p)
-
-# 保存图像到文件
-# ggsave("1_place_salary_distribution.png", plot = p, height = 5, width = 3, dpi = 300)
 ```
 
 以下是不同地区薪资分布的分析：
@@ -705,8 +656,6 @@ p2 <- ggplot(
   )
 
 print(p2)
-# 保存薪资分布图
-# ggsave("2_job_salary_distribution.png", plot = p2, height = 5, width = 3, dpi = 300)
 ```
 
 该图展示了不同职位的薪资分布（基于对数转换后的年薪），分析如下：
@@ -785,9 +734,6 @@ p3 <- ggplot(
 
 # 打印图形
 print(p3)
-
-# 保存薪资分布图
-# ggsave("2_job_salary_distribution_top_bottom.png", plot = p3, height = 8, width = 6, dpi = 300)
 ```
 
 图中展示了薪资分布中前 10 和后 10 职位的对数年薪分布情况：
@@ -859,9 +805,6 @@ p4 <- ggplot(welfare_summary, aes(x = "", y = 比例, fill = 福利状态)) +
 
 # 打印图形
 print(p4)
-
-# 保存饼图
-# ggsave("3_welfare_pie_chart.png", plot = p4, height = 6, width = 6, dpi = 300)
 ```
 
 ```{r}
@@ -959,9 +902,6 @@ p_frequency <- ggplot(work_experience_summary, aes(x = reorder(已有工作经�
   )
 
 print(p_frequency)
-
-# 保存频次分布图
-# ggsave("work_experience_frequency.png", plot = p_frequency, height = 6, width = 8, dpi = 300)
 ```
 ```{r}
 # 绘制"已有工作经验"的小提琴图 + 箱线图
@@ -1057,9 +997,6 @@ p_education_pie <- ggplot(education_summary, aes(x = "", y = proportion, fill = 
 
 # 打印饼图
 print(p_education_pie)
-
-# 保存饼图
-# ggsave("education_pie_no_guidelines.png", plot = p_education_pie, height = 6, width = 8, dpi = 300)
 ```
 
 
@@ -1115,9 +1052,6 @@ p_education_region <- ggplot(education_region, aes(x = 位置, y = proportion, f
 
 # 打印图像
 print(p_education_region)
-
-# 保存图像
-# ggsave("education_region_distribution.png", plot = p_education_region, height = 8, width = 12, dpi = 300)
 ```
 
 学历分布比例
@@ -1179,9 +1113,6 @@ p_education_salary <- ggplot(data_log, aes(x = 学历, y = log_salary, fill = �
 
 # 打印图像
 print(p_education_salary)
-
-# 保存图像
-# ggsave("education_salary_violin.png", plot = p_education_salary, height = 8, width = 12, dpi = 300)
 ```
 
 学历与薪资的分布
