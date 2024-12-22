@@ -8,6 +8,7 @@
 project/
 ├── README.md          # 项目说明文档
 ├── main.rmd          # 主文档，整合所有分析
+├── main.html         # 主文档的HTML格式，用于展示
 ├── src/             # 源代码目录
 │   ├── preprocessing.rmd  # 数据预处理
 │   ├── description.rmd    # 描述性统计
