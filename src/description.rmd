@@ -1,4 +1,4 @@
-
+# 描述性统计
 
 ## Settings
 加载必要的包
@@ -12,15 +12,13 @@ library(showtext)
 
 图像设置：
 ```{r}
-library(ggplot2)
-
 # 蓝色系调色板
 job_palette <- c(
-  "A" = "#4A90E2",  # 深蓝 - 用于主要类别
-  "B" = "#5DADE2",  # 蓝色 - 用于次要类别
-  "C" = "#85C1E9",  # 浅蓝 - 用于第三级类别
-  "D" = "#AED6F1",  # 浅蓝 - 用于背景或次要信息
-  "E" = "#D6EAF8"   # 浅蓝白 - 用于补充信息
+  "A" = "#4A90E2", # 深蓝 - 用于主要类别
+  "B" = "#5DADE2", # 蓝色 - 用于次要类别
+  "C" = "#85C1E9", # 浅蓝 - 用于第三级类别
+  "D" = "#AED6F1", # 浅蓝 - 用于背景或次要信息
+  "E" = "#D6EAF8" # 浅蓝白 - 用于补充信息
 )
 
 # 主题自定义函数
@@ -28,81 +26,80 @@ theme_job_analysis <- function() {
   theme_minimal() +
     theme(
       # 字体设置
-      text = element_text(family = "STSongti-SC-Black"),
-      
+      text = element_text(family = theme_font),
+
       # 标题设置
       plot.title = element_text(
-        size = 16, 
-        face = "bold", 
-        hjust = 0.5, 
+        size = 16,
+        face = "bold",
+        hjust = 0.5,
         color = job_palette["A"],
         margin = margin(b = 20)
       ),
-      
+
       # 副标题设置
       plot.subtitle = element_text(
-        size = 12, 
-        hjust = 0.5, 
+        size = 12,
+        hjust = 0.5,
         color = job_palette["B"],
         margin = margin(b = 10)
       ),
-      
+
       # 轴标题设置
       axis.title = element_text(
-        size = 12, 
+        size = 12,
         color = job_palette["A"],
         margin = margin(t = 10, b = 10)
       ),
-      
+
       # 轴文本设置
       axis.text = element_text(
-        size = 10, 
+        size = 10,
         color = "#666666"
       ),
-      
+
       # 网格线设置
       panel.grid.major = element_line(
         color = "#EEEEEE",
         size = 0.2
       ),
       panel.grid.minor = element_blank(),
-      
+
       # 图例设置
       legend.title = element_text(
-        size = 11, 
+        size = 11,
         color = job_palette["A"]
       ),
       legend.text = element_text(
-        size = 10, 
+        size = 10,
         color = "#666666"
       ),
       legend.position = "right",
-      
+
       # 背景设置
       plot.background = element_rect(
-        fill = "white", 
+        fill = "white",
         color = NA
       ),
       panel.background = element_rect(
-        fill = "white", 
+        fill = "white",
         color = NA
       ),
-      
+
       # 边距设置
       plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
     )
 }
-library(showtext)
+
 
 # 启用中文字体支持
-font_add(family = "STSongti-SC-Black", regular = "data/STSongti-SC-Black.ttf")  # 替换为适合你的系统字体
+theme_font <- "STSongti-SC-Black"
+font_add(family = "STSongti-SC-Black", regular = "data/STSongti-SC-Black.ttf")
 ```
 
 ## 因变量描述性统计：年薪的处理
 ### 年薪箱线图、直方图统计
 ```{r}
-library(patchwork)
-library(ggplot2)
 # 创建基础箱线图函数，添加采样点参数
 create_boxplot <- function(data_raw, y_limit = NULL) {
   ggplot(data_raw, aes(x = "年薪", y = 年薪)) +
@@ -123,25 +120,25 @@ create_boxplot <- function(data_raw, y_limit = NULL) {
     coord_flip() +
     theme_minimal() +
     theme(
-      text = element_text(family = "STSongti-SC-Black"),  # 默认中文字体
-      axis.text = element_text(size = 10, color = "#666666", family = "STSongti-SC-Black"),  # 坐标轴刻度
-      axis.title = element_text(size = 12, face = "bold", color = job_palette["A"], family = "STSongti-SC-Black"),  # 坐标轴标题
-      axis.text.x = element_blank(),  # 隐藏 x 轴刻度
-      axis.title.x = element_blank(),  # 隐藏 x 轴标题
-      axis.text.y = element_text(size = 10, family = "STSongti-SC-Black"),  # y 轴刻度中文显示
-      plot.title = element_text(size = 16, face = "bold", color = job_palette["A"], family = "STSongti-SC-Black"),  # 图标题
-      plot.subtitle = element_text(size = 12, color = job_palette["B"], family = "STSongti-SC-Black")  # 副标题
+      text = element_text(family = theme_font), # 默认中文字体
+      axis.text = element_text(size = 10, color = "#666666", family = theme_font), # 坐标轴刻度
+      axis.title = element_text(size = 12, face = "bold", color = job_palette["A"], family = theme_font), # 坐标轴标题
+      axis.text.x = element_blank(), # 隐藏 x 轴刻度
+      axis.title.x = element_blank(), # 隐藏 x 轴标题
+      axis.text.y = element_text(size = 10, family = theme_font), # y 轴刻度中文显示
+      plot.title = element_text(size = 16, face = "bold", color = job_palette["A"], family = theme_font), # 图标题
+      plot.subtitle = element_text(size = 12, color = job_palette["B"], family = theme_font) # 副标题
     ) +
     scale_y_continuous(
-    breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
-    labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
-    sec.axis = sec_axis(
-      trans = ~ exp(.),  # 次坐标轴转换回实际年薪
-      name = "年薪（万元）",
-      breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
-      labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
+      breaks = scales::pretty_breaks(n = 6), # 主坐标轴等间隔视觉距离
+      labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
+      sec.axis = sec_axis(
+        trans = ~ exp(.), # 次坐标轴转换回实际年薪
+        name = "年薪（万元）",
+        breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
+        labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
+      )
     )
-  )
 }
 
 # 创建直方图函数
@@ -170,24 +167,24 @@ create_histogram <- function(data_raw, x_limit = NULL) {
     ) +
     theme_minimal() +
     theme(
-      text = element_text(family = "STSongti-SC-Black"),  # 默认中文字体
-      axis.text = element_text(size = 10, color = "#666666", family = "STSongti-SC-Black"),  # 坐标轴刻度
-      axis.title = element_text(size = 12, face = "bold", color = job_palette["A"], family = "STSongti-SC-Black"),  # 坐标轴标题
-      axis.text.x = element_text(size = 10, family = "STSongti-SC-Black"),  # x 轴刻度中文显示
-      axis.text.y = element_text(size = 10, family = "STSongti-SC-Black"),  # y 轴刻度中文显示
-      plot.title = element_text(size = 16, face = "bold", color = job_palette["A"], family = "STSongti-SC-Black"),  # 图标题
-      plot.subtitle = element_text(size = 12, color = job_palette["B"], family = "STSongti-SC-Black")  # 副标题
+      text = element_text(family = theme_font), # 默认中文字体
+      axis.text = element_text(size = 10, color = "#666666", family = theme_font), # 坐标轴刻度
+      axis.title = element_text(size = 12, face = "bold", color = job_palette["A"], family = theme_font), # 坐标轴标题
+      axis.text.x = element_text(size = 10, family = theme_font), # x 轴刻度中文显示
+      axis.text.y = element_text(size = 10, family = theme_font), # y 轴刻度中文显示
+      plot.title = element_text(size = 16, face = "bold", color = job_palette["A"], family = theme_font), # 图标题
+      plot.subtitle = element_text(size = 12, color = job_palette["B"], family = theme_font) # 副标题
     ) +
     scale_y_continuous(
-    breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
-    labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
-    sec.axis = sec_axis(
-      trans = ~ exp(.),  # 次坐标轴转换回实际年薪
-      name = "年薪（万元）",
-      breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
-      labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
+      breaks = scales::pretty_breaks(n = 6), # 主坐标轴等间隔视觉距离
+      labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
+      sec.axis = sec_axis(
+        trans = ~ exp(.), # 次坐标轴转换回实际年薪
+        name = "年薪（万元）",
+        breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
+        labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
+      )
     )
-  )
 }
 
 # 计算统计量用于限定范围的图
@@ -197,33 +194,34 @@ salary_upper <- salary_stats[5] + 1.5 * salary_iqr
 create_combined_plot <- function(data_raw, limits = NULL, title_suffix) {
   boxplot <- create_boxplot(data_raw, limits)
   histogram <- create_histogram(data_raw, limits)
-  
+
   # 使用 patchwork 合并图形
   combined_plot <- boxplot + histogram +
     plot_layout(heights = c(0.3, 0.7)) +
     plot_annotation(
       title = paste0("职位年薪分布", title_suffix),
-      subtitle = if (is.null(limits)) 
-                   "完整范围" 
-                 else 
-                   paste0("显示范围：0-", round(salary_upper, 1), "万元"),
+      subtitle = if (is.null(limits)) {
+        "完整范围"
+      } else {
+        paste0("显示范围：0-", round(salary_upper, 1), "万元")
+      },
       theme = theme(
         plot.title = element_text(
-          size = 16, 
-          face = "bold", 
-          hjust = 0.5, 
-          color = job_palette["A"], 
-          family = "STSongti-SC-Black"
+          size = 16,
+          face = "bold",
+          hjust = 0.5,
+          color = job_palette["A"],
+          family = theme_font
         ),
         plot.subtitle = element_text(
-          size = 12, 
-          hjust = 0.5, 
-          color = job_palette["B"], 
-          family = "STSongti-SC-Black"
+          size = 12,
+          hjust = 0.5,
+          color = job_palette["B"],
+          family = theme_font
         )
       )
     )
-  
+
   return(combined_plot)
 }
 
@@ -266,11 +264,6 @@ summary(data_raw$年薪)
 
 ### 年薪对数化处理
 ```{r}
-# 添加对数年薪列
-data_raw <- data_raw %>%
-  mutate(log_salary = log(年薪))
-
-
 # 创建对数年薪的箱线图函数
 create_log_boxplot <- function(data, y_limit = NULL) {
   ggplot(data, aes(x = "年薪", y = log_salary)) +
@@ -295,15 +288,15 @@ create_log_boxplot <- function(data, y_limit = NULL) {
       axis.title.x = element_blank()
     ) +
     scale_y_continuous(
-    breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
-    labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
-    sec.axis = sec_axis(
-      trans = ~ exp(.),  # 次坐标轴转换回实际年薪
-      name = "年薪（万元）",
-      breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
-      labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
+      breaks = scales::pretty_breaks(n = 6), # 主坐标轴等间隔视觉距离
+      labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
+      sec.axis = sec_axis(
+        trans = ~ exp(.),
+        name = "年薪（万元）",
+        breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
+        labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
+      )
     )
-  )
 }
 
 # 创建对数年薪的直方图函数
@@ -351,28 +344,29 @@ log_salary_upper <- log_salary_stats[5] + 1.5 * log_salary_iqr
 create_log_combined_plot <- function(data, limits = NULL, title_suffix) {
   boxplot <- create_log_boxplot(data, limits)
   histogram <- create_log_histogram(data, limits)
-  
+
   boxplot / histogram +
     plot_layout(heights = c(0.3, 0.7)) +
     plot_annotation(
       title = paste0("职位年薪对数分布", title_suffix),
-      subtitle = if (is.null(limits)) 
-                   "完整范围" 
-                 else 
-                   "基本统计范围",
+      subtitle = if (is.null(limits)) {
+        "完整范围"
+      } else {
+        "基本统计范围"
+      },
       theme = theme(
         plot.title = element_text(
-          size = 16, 
-          face = "bold", 
-          hjust = 0.5, 
-          color = job_palette["A"], 
-          family = "STSongti-SC-Black"
+          size = 16,
+          face = "bold",
+          hjust = 0.5,
+          color = job_palette["A"],
+          family = theme_font
         ),
         plot.subtitle = element_text(
-          size = 12, 
-          hjust = 0.5, 
-          color = job_palette["B"], 
-          family = "STSongti-SC-Black"
+          size = 12,
+          hjust = 0.5,
+          color = job_palette["B"],
+          family = theme_font
         )
       )
     )
@@ -397,8 +391,8 @@ print(log_combined_plot2)
 ```{r}
 # 绘制对数年薪的 QQ 图
 p_qq <- ggplot(data_raw, aes(sample = log_salary)) +
-  stat_qq(color = "#85C1E9", alpha = 0.7, size = 2) +  # QQ 图点
-  stat_qq_line(color = "#0056b3", linetype = "dashed", size = 1) +  # QQ 图参考线
+  stat_qq(color = "#85C1E9", alpha = 0.7, size = 2) + # QQ 图点
+  stat_qq_line(color = "#0056b3", linetype = "dashed", size = 1) + # QQ 图参考线
   labs(
     title = "年薪的QQ图",
     subtitle = "检查对数年薪分布是否符合正态分布",
@@ -407,7 +401,7 @@ p_qq <- ggplot(data_raw, aes(sample = log_salary)) +
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     plot.subtitle = element_text(size = 14, hjust = 0.5, color = "#5DADE2"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -442,19 +436,19 @@ summary(data_raw)
 
 1. 职位与样本量：数据集中共有 9865 个职位样本
 2. 薪资分布：
-	- 年薪的范围从 最低 0.55 万元 到 最高 306 万元，差异显著。
-	- 年薪的中位数为 7.8 万元，平均值为 11.28 万元，说明部分高薪职位可能拉高了平均值。
-	- 对数年薪的统计更直观，中位数为 2.05（对应约 7.8 万元），分布集中在 1.79 至 2.48 的范围（即约 6 万到 12 万之间）。
+ - 年薪的范围从 最低 0.55 万元 到 最高 306 万元，差异显著。
+ - 年薪的中位数为 7.8 万元，平均值为 11.28 万元，说明部分高薪职位可能拉高了平均值。
+ - 对数年薪的统计更直观，中位数为 2.05（对应约 7.8 万元），分布集中在 1.79 至 2.48 的范围（即约 6 万到 12 万之间）。
 3. 福利分布：
-	- 样本中，有 3980 个职位明确提供福利（占比约 40.3%），其余 5885 个职位未说明福利信息。
+ - 样本中，有 3980 个职位明确提供福利（占比约 40.3%），其余 5885 个职位未说明福利信息。
 4. 工作经验：
-	- 已有工作经验的字段覆盖了多种年限要求，从 经验不限 到 5 年以上不等，具体分布可进一步挖掘。
+ - 已有工作经验的字段覆盖了多种年限要求，从 经验不限 到 5 年以上不等，具体分布可进一步挖掘。
 5. 学历与公司行业：
-	- 数据中的学历字段涵盖了 “本科”、“研究生” 等多个层次，尚未归类。
-	- 公司行业多样化，包括互联网、服务业、金融等多个领域，具体分布待进一步统计。
+ - 数据中的学历字段涵盖了 “本科”、“研究生” 等多个层次，尚未归类。
+ - 公司行业多样化，包括互联网、服务业、金融等多个领域，具体分布待进一步统计。
 6. 公司规模与融资阶段：
-	- 公司规模分布广泛，从 小于 100 人的小企业 到 500 人以上的大企业均有覆盖。
-	- 融资阶段涵盖从 “未融资” 到 “D 轮及以上”，但也存在较多 “未知” 的条目。
+ - 公司规模分布广泛，从 小于 100 人的小企业 到 500 人以上的大企业均有覆盖。
+ - 融资阶段涵盖从 “未融资” 到 “D 轮及以上”，但也存在较多 “未知” 的条目。
 
 
 ### x1=位置
@@ -489,38 +483,29 @@ ggplot(top_cities, aes(x = reorder(位置, 职位数量), y = 职位数量)) +
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
-    axis.text.x = element_text(size = 10, color = "#666666"), # 缩小字体大小
-    axis.text.y = element_text(size = 10, color = "#666666"), # 缩小字体大小
-    panel.grid.major.y = element_blank(), # 去掉网格线
-    panel.grid.minor = element_blank() # 去掉次网格线
+    axis.text.x = element_text(size = 10, color = "#666666"),
+    axis.text.y = element_text(size = 10, color = "#666666"),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank()
   ) +
-  scale_y_continuous(
-    breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
-    labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
-    sec.axis = sec_axis(
-      trans = ~ exp(.),  # 次坐标轴转换回实际年薪
-      name = "年薪（万元）",
-      breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
-      labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
-    )
-  )
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)))
 ```
 
 从五大地区职位数量分布图中可以看出：
-1.	东部地区占据主导地位：
-- 东部地区的职位数量显著领先其他区域，显示了东部经济较为发达，吸引了更多企业和职位。
-2.	中部地区次之：
-- 中部地区职位数量排名第二，表明中部地区在经济发展中逐渐崭露头角，对就业市场的吸引力有所增加。
-3.	南部地区紧随其后：
-- 南部地区职位数量排名第三，其经济发展较快，尤其是在大湾区的带动下，创造了大量就业机会。
-4.	西部地区职位较少：
-- 西部地区的职位数量较少，反映了西部地区相较于东部、中部的经济发展仍有一定差距。
-5.	东北地区职位最少：
-- 东北地区的职位数量最少，可能与近年来东北地区经济发展放缓有关，工作岗位增长缓慢。
-6.	区域经济差异明显：
-- 图表反映了不同区域经济发展水平的不均衡性，从而导致职位数量分布的差异。
-7.	就业热点集中于东部和南部：
-- 企业对东部和南部地区的偏好凸显了这些区域的经济活跃度以及较高的人才吸引力。
+1. 东部地区占据主导地位：
+   - 东部地区的职位数量显著领先其他区域，显示了东部经济较为发达，吸引了更多企业和职位。
+2. 中部地区次之：
+   - 中部地区职位数量排名第二，表明中部地区在经济发展中逐渐崭露头角，对就业市场的吸引力有所增加。
+3. 南部地区紧随其后：
+   - 南部地区职位数量排名第三，其经济发展较快，尤其是在大湾区的带动下，创造了大量就业机会。
+4. 西部地区职位较少：
+   - 西部地区的职位数量较少，反映了西部地区相较于东部、中部的经济发展仍有一定差距。
+5. 东北地区职位最少：
+   - 东北地区的职位数量最少，可能与近年来东北地区经济发展放缓有关，工作岗位增长缓慢。
+6. 区域经济差异明显：
+   - 图表反映了不同区域经济发展水平的不均衡性，从而导致职位数量分布的差异。
+7. 就业热点集中于东部和南部：
+   - 企业对东部和南部地区的偏好凸显了这些区域的经济活跃度以及较高的人才吸引力。
 
 
 
@@ -529,8 +514,8 @@ p <- ggplot(
   data_raw,
   aes(x = reorder(位置, log_salary, FUN = median), y = log_salary)
 ) +
-  geom_boxplot(fill = "#85C1E9", alpha = 0.7, outlier.shape = NA, width = 0.7) +  # 去掉离群点
-  geom_jitter(width = 0.2, alpha = 0.2, color = "#5DADE2", size = 0.8) +  # 添加散点
+  geom_boxplot(fill = "#85C1E9", alpha = 0.7, outlier.shape = NA, width = 0.7) + # 去掉离群点
+  geom_jitter(width = 0.2, alpha = 0.2, color = "#5DADE2", size = 0.8) + # 添加散点
   coord_flip() +
   labs(
     title = "五大地区的薪资分布",
@@ -539,22 +524,22 @@ p <- ggplot(
     y = "对数年薪"
   ) +
   theme(
-  text = element_text(family = "STSongti-SC-Black"),
-  plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
-  axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
-  axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
-  axis.text.x = element_text(size = 10, color = "#666666"),
-  axis.text.y = element_text(size = 10, color = "#666666"),
-  panel.background = element_blank(),  # 移除面板背景
-  plot.background = element_blank(),   # 移除整体背景
-  panel.grid.major = element_line(color = "#E6E6E6"), # 主网格线颜色
-  panel.grid.minor = element_blank()  # 移除次网格线
-) +
+    text = element_text(family = theme_font),
+    plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
+    axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
+    axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
+    axis.text.x = element_text(size = 10, color = "#666666"),
+    axis.text.y = element_text(size = 10, color = "#666666"),
+    panel.background = element_blank(), # 移除面板背景
+    plot.background = element_blank(), # 移除整体背景
+    panel.grid.major = element_line(color = "#E6E6E6"), # 主网格线颜色
+    panel.grid.minor = element_blank() # 移除次网格线
+  ) +
   scale_y_continuous(
-    breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
+    breaks = scales::pretty_breaks(n = 6), # 主坐标轴等间隔视觉距离
     labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
     sec.axis = sec_axis(
-      trans = ~ exp(.),  # 次坐标轴转换回实际年薪
+      trans = ~ exp(.), # 次坐标轴转换回实际年薪
       name = "年薪（万元）",
       breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
       labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
@@ -563,7 +548,7 @@ p <- ggplot(
 
 print(p)
 ```
-```
+
 
 从不同地区薪资分布图中可以看出：
 1. 东部地区薪资水平最高  
@@ -590,8 +575,9 @@ print(p)
 6. 区域经济差异显著  
    - 东部和南部地区的薪资分布显著高于其他地区，表明经济发达地区更容易吸引高薪职位。  
    - 西部和东北地区的薪资水平偏低，显示了区域经济发展不平衡对薪资分布的直接影响。
-	
+
 ### x2=职位
+
 ```{r}
 # 描述性统计
 job_summary <- data_raw %>%
@@ -629,7 +615,7 @@ ggplot(top_jobs, aes(x = reorder(职位, 职位数量), y = 职位数量)) +
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -638,32 +624,23 @@ ggplot(top_jobs, aes(x = reorder(职位, 职位数量), y = 职位数量)) +
     panel.grid.major.y = element_blank(),
     panel.grid.minor = element_blank()
   ) +
-  scale_y_continuous(
-    breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
-    labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
-    sec.axis = sec_axis(
-      trans = ~ exp(.),  # 次坐标轴转换回实际年薪
-      name = "年薪（万元）",
-      breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
-      labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
-    )
-  )
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)))
 ```
 
 该图展示了职位数量排名前30的职位分布，分析如下：
 
 1. 数量最多的职位：
-    - “向导”职位数量显著高于其他职位，显示出该类别的市场需求量极大。
-	- 紧随其后的是“营业员”“人事助理”等职位，这些职位大多为基础服务类或管理类岗位，反映了企业对基础性人力资源需求的普遍性。
+ - “向导”职位数量显著高于其他职位，显示出该类别的市场需求量极大。
+ - 紧随其后的是“营业员”“人事助理”等职位，这些职位大多为基础服务类或管理类岗位，反映了企业对基础性人力资源需求的普遍性。
 2. 职业分布特点：
-	- 排名前10的职位大多为基层管理或执行类岗位，例如“运营专员”“文员”等，这类职位通常涉及公司运营中的重要支撑性工作。
-	- 另外，诸如“程序员”“电商操作”等技术性职位也占据较大比例，表明在当前经济环境下，技术和互联网相关岗位需求较高。
+ - 排名前10的职位大多为基层管理或执行类岗位，例如“运营专员”“文员”等，这类职位通常涉及公司运营中的重要支撑性工作。
+ - 另外，诸如“程序员”“电商操作”等技术性职位也占据较大比例，表明在当前经济环境下，技术和互联网相关岗位需求较高。
 3. 中小型职位分布：
-	- 排名靠后的职位，如“数据分析师”“银行职员”等多为专业性较强或行业细分领域的岗位，尽管整体数量不及基础性职位，但这类岗位对行业的精细化发展有重要意义。
+ - 排名靠后的职位，如“数据分析师”“银行职员”等多为专业性较强或行业细分领域的岗位，尽管整体数量不及基础性职位，但这类岗位对行业的精细化发展有重要意义。
 4. 市场需求差异：
-	- 不同职业需求量差距较大，表明市场需求的高度集中和不平衡性。企业对基础性、高流动性的岗位需求量最大，而高技术含量和专业性的岗位需求相对有限。
+ - 不同职业需求量差距较大，表明市场需求的高度集中和不平衡性。企业对基础性、高流动性的岗位需求量最大，而高技术含量和专业性的岗位需求相对有限。
 5. 行业背景影响：
-	- 排名前列的职位多分布于服务业、销售业、互联网等领域，而排名靠后的职位更多与金融、教育等特定行业相关。这表明不同行业的岗位需求对职业分布的显著影响。
+ - 排名前列的职位多分布于服务业、销售业、互联网等领域，而排名靠后的职位更多与金融、教育等特定行业相关。这表明不同行业的岗位需求对职业分布的显著影响。
 
 
 ```{r, fig.height=10, fig.width=8, echo=FALSE}
@@ -673,10 +650,12 @@ data_raw <- data_raw %>%
 
 # 绘制不同职位的薪资分布图（基于对数年薪）
 
-p2 <- ggplot(data_raw, 
-       aes(x = reorder(职位, log_salary, FUN = median), y = log_salary)) +
-  geom_boxplot(fill = "#85C1E9", alpha = 0.7, outlier.shape = NA, width = 0.7) +  # 去掉离群点
-  geom_jitter(width = 0.2, alpha = 0.2, color = "#5DADE2", size = 0.8) +  # 添加散点
+p2 <- ggplot(
+  data_raw,
+  aes(x = reorder(职位, log_salary, FUN = median), y = log_salary)
+) +
+  geom_boxplot(fill = "#85C1E9", alpha = 0.7, outlier.shape = NA, width = 0.7) + # 去掉离群点
+  geom_jitter(width = 0.2, alpha = 0.2, color = "#5DADE2", size = 0.8) + # 添加散点
   coord_flip() +
   labs(
     title = "不同职位的薪资分布",
@@ -686,7 +665,7 @@ p2 <- ggplot(data_raw,
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     plot.subtitle = element_text(size = 14, hjust = 0.5, color = "#5DADE2"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -698,10 +677,10 @@ p2 <- ggplot(data_raw,
     panel.grid.minor = element_blank()
   ) +
   scale_y_continuous(
-    breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
+    breaks = scales::pretty_breaks(n = 6), # 主坐标轴等间隔视觉距离
     labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
     sec.axis = sec_axis(
-      trans = ~ exp(.),  # 次坐标轴转换回实际年薪
+      trans = ~ exp(.), # 次坐标轴转换回实际年薪
       name = "年薪（万元）",
       breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
       labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
@@ -714,20 +693,20 @@ print(p2)
 该图展示了不同职位的薪资分布（基于对数转换后的年薪），分析如下：
 
 1. 高薪职位特征：
-	- “CFO” 的年薪分布明显高于其他职位，整体分布区间集中在 30 万元以上，最高可达约 400 万元。
-	- 其他高薪职位包括 “程序员”、“数据分析师”、“司机” 和 “律师”，这类岗位的薪资上限较高，但分布更为离散，显示出行业内不同岗位或工作经验对薪资的显著影响。
+ - “CFO” 的年薪分布明显高于其他职位，整体分布区间集中在 30 万元以上，最高可达约 400 万元。
+ - 其他高薪职位包括 “程序员”、“数据分析师”、“司机” 和 “律师”，这类岗位的薪资上限较高，但分布更为离散，显示出行业内不同岗位或工作经验对薪资的显著影响。
 2. 中等薪资职位：
-	- “教师”、“经理” 和 “银行职员” 等职位的薪资分布较为集中，整体分布区间在 10 万至 30 万元之间。
-	- 这些职位的年薪波动较小，显示出较高的市场规范性，但其上限与高薪职位差距较大。
+ - “教师”、“经理” 和 “银行职员” 等职位的薪资分布较为集中，整体分布区间在 10 万至 30 万元之间。
+ - 这些职位的年薪波动较小，显示出较高的市场规范性，但其上限与高薪职位差距较大。
 3. 低薪职位分布：
-	- “保安”、“营业员” 和 “餐饮服务” 等职位的薪资分布集中在 10 万元以下，且分布区间较窄，显示出较低的薪资水平和岗位要求。
-	- 这类职位的薪资差异不显著，基本反映了劳动力市场对基础服务类岗位的薪资设定。
+ - “保安”、“营业员” 和 “餐饮服务” 等职位的薪资分布集中在 10 万元以下，且分布区间较窄，显示出较低的薪资水平和岗位要求。
+ - 这类职位的薪资差异不显著，基本反映了劳动力市场对基础服务类岗位的薪资设定。
 4. 分布特征总结：
-	- 整体来看，高薪职位的薪资分布区间更宽，表明薪资受岗位细分、公司类型或个人能力的影响较大。
-	- 基础岗位薪资分布更为集中，显示出薪资的低波动性和较低上限。
+ - 整体来看，高薪职位的薪资分布区间更宽，表明薪资受岗位细分、公司类型或个人能力的影响较大。
+ - 基础岗位薪资分布更为集中，显示出薪资的低波动性和较低上限。
 5. 市场需求与薪资的关系：
-	- 高薪职位，如 “CFO” 和 “程序员”，尽管需求量相对较少，但其薪资水平显著高于其他岗位，反映了高技能岗位的稀缺性及其对应的薪资溢价。
-	- 基础服务类岗位需求量大，但薪资水平普遍较低，显示出市场需求对薪资的调节作用。
+ - 高薪职位，如 “CFO” 和 “程序员”，尽管需求量相对较少，但其薪资水平显著高于其他岗位，反映了高技能岗位的稀缺性及其对应的薪资溢价。
+ - 基础服务类岗位需求量大，但薪资水平普遍较低，显示出市场需求对薪资的调节作用。
 
 
 ```{r, fig.height=10, fig.width=8, echo=FALSE}
@@ -747,10 +726,12 @@ filtered_data <- data_raw %>%
   filter(职位 %in% selected_jobs$职位)
 
 # 绘制前10和后10职位的薪资分布图
-p3 <- ggplot(filtered_data, 
-       aes(x = reorder(职位, log_salary, FUN = median), y = log_salary)) +
-  geom_boxplot(fill = "#85C1E9", alpha = 0.7, outlier.shape = NA, width = 0.7) +  # 去掉离群点
-  geom_jitter(width = 0.2, alpha = 0.2, color = "#5DADE2", size = 0.8) +  # 添加散点
+p3 <- ggplot(
+  filtered_data,
+  aes(x = reorder(职位, log_salary, FUN = median), y = log_salary)
+) +
+  geom_boxplot(fill = "#85C1E9", alpha = 0.7, outlier.shape = NA, width = 0.7) + # 去掉离群点
+  geom_jitter(width = 0.2, alpha = 0.2, color = "#5DADE2", size = 0.8) + # 添加散点
   coord_flip() +
   labs(
     title = "前 10 和后 10 职位的薪资分布",
@@ -760,7 +741,7 @@ p3 <- ggplot(filtered_data,
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     plot.subtitle = element_text(size = 14, hjust = 0.5, color = "#5DADE2"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -772,10 +753,10 @@ p3 <- ggplot(filtered_data,
     panel.grid.minor = element_blank()
   ) +
   scale_y_continuous(
-    breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
+    breaks = scales::pretty_breaks(n = 6), # 主坐标轴等间隔视觉距离
     labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
     sec.axis = sec_axis(
-      trans = ~ exp(.),  # 次坐标轴转换回实际年薪
+      trans = ~ exp(.), # 次坐标轴转换回实际年薪
       name = "年薪（万元）",
       breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
       labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
@@ -789,17 +770,17 @@ print(p3)
 图中展示了薪资分布中前 10 和后 10 职位的对数年薪分布情况：
 
 1. 高薪职位（前 10）：
-	- CFO 的薪资范围最广，分布从 30 万到超过 400 万，表明该岗位薪资差异极大，受公司规模、行业和个体能力影响显著。
-	- 程序员 和 数据分析师 紧随其后，薪资集中分布在 10-50 万范围，少数样本达 100 万以上，反映了科技类岗位的薪资优势。
-	- 律师 和 司机 的薪资表现出较高的上限，但分布范围较为分散。
-	- 高薪职位中普遍存在离群值，可能代表高级岗位或特定行业的高端职位。
+ - CFO 的薪资范围最广，分布从 30 万到超过 400 万，表明该岗位薪资差异极大，受公司规模、行业和个体能力影响显著。
+ - 程序员 和 数据分析师 紧随其后，薪资集中分布在 10-50 万范围，少数样本达 100 万以上，反映了科技类岗位的薪资优势。
+ - 律师 和 司机 的薪资表现出较高的上限，但分布范围较为分散。
+ - 高薪职位中普遍存在离群值，可能代表高级岗位或特定行业的高端职位。
 2. 低薪职位（后 10）：
-	- 保安、营业员 和 餐饮服务 等职位的薪资集中在 5 万以下，显示出薪资水平的限制。
-	- 其他 类和 会计 等职位的薪资分布略宽，部分样本薪资超过 10 万，但整体上限较低。
-	- 低薪职位的分布较为集中，离群值较少，反映了该类岗位薪资较为一致的市场规律。
+ - 保安、营业员 和 餐饮服务 等职位的薪资集中在 5 万以下，显示出薪资水平的限制。
+ - 其他 类和 会计 等职位的薪资分布略宽，部分样本薪资超过 10 万，但整体上限较低。
+ - 低薪职位的分布较为集中，离群值较少，反映了该类岗位薪资较为一致的市场规律。
 3. 分布比较：
-	- 高薪职位的薪资分布区间显著宽于低薪职位，反映出市场对高级技能岗位的溢价。
-	- 高薪职位中离群值多，表明该类岗位的薪资更容易受外部条件的影响，如行业需求和公司盈利能力。
+ - 高薪职位的薪资分布区间显著宽于低薪职位，反映出市场对高级技能岗位的溢价。
+ - 高薪职位中离群值多，表明该类岗位的薪资更容易受外部条件的影响，如行业需求和公司盈利能力。
 
 ### x3=福利
 ```{r}
@@ -826,11 +807,6 @@ welfare_summary <- data_raw %>%
     标签 = paste0(福利状态, " (", scales::percent(比例, accuracy = 0.1), ")")
   )
 
-# 加载字体
-library(showtext)
-font_add(family = "STSongti-SC-Black", regular = "/Users/fengzhu/Desktop/大三上学科/回归分析/RG_project/STSongti-SC-Black.ttf")
-showtext_auto()
-
 # 绘制饼图
 p4 <- ggplot(welfare_summary, aes(x = "", y = 比例, fill = 福利状态)) +
   geom_bar(stat = "identity", width = 1, color = "white") +
@@ -841,7 +817,7 @@ p4 <- ggplot(welfare_summary, aes(x = "", y = 比例, fill = 福利状态)) +
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     legend.title = element_text(size = 14, face = "bold", color = "#0056b3"),
     legend.text = element_text(size = 12, color = "#666666"),
@@ -853,33 +829,30 @@ p4 <- ggplot(welfare_summary, aes(x = "", y = 比例, fill = 福利状态)) +
   geom_text(
     aes(label = 标签),
     position = position_stack(vjust = 0.5),
-    family = "STSongti-SC-Black",
+    family = theme_font,
     size = 5,
     color = "white"
   )
 
 # 打印图形
 print(p4)
-
 ```
 
 ```{r}
-library(ggplot2)
-
 # 创建福利状态列
 data_raw <- data_raw %>%
   mutate(福利状态 = ifelse(福利, "提供福利", "未提供福利"))
 
 # 绘制小提琴图
 ggplot(data_raw, aes(x = 福利状态, y = log_salary, fill = 福利状态)) +
-  geom_violin(alpha = 0.7, color = "black", trim = FALSE) +  # 小提琴图
-  geom_boxplot(width = 0.1, fill = "white", alpha = 0.5, outlier.shape = NA) +  # 添加嵌套箱线图
+  geom_violin(alpha = 0.7, color = "black", trim = FALSE) + # 小提琴图
+  geom_boxplot(width = 0.1, fill = "white", alpha = 0.5, outlier.shape = NA) + # 添加嵌套箱线图
   geom_jitter(
     aes(color = 福利状态),
     alpha = 0.2,
     width = 0.2,
     size = 0.2
-  ) +  # 添加散点
+  ) + # 添加散点
   scale_fill_manual(values = c("提供福利" = "#85C1E9", "未提供福利" = "#E74C3C")) +
   scale_color_manual(values = c("提供福利" = "#85C1E9", "未提供福利" = "#E74C3C")) +
   labs(
@@ -890,7 +863,7 @@ ggplot(data_raw, aes(x = 福利状态, y = log_salary, fill = 福利状态)) +
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     plot.subtitle = element_text(size = 14, hjust = 0.5, color = "#5DADE2"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -900,10 +873,10 @@ ggplot(data_raw, aes(x = 福利状态, y = log_salary, fill = 福利状态)) +
     legend.position = "none"
   ) +
   scale_y_continuous(
-    breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
+    breaks = scales::pretty_breaks(n = 6), # 主坐标轴等间隔视觉距离
     labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
     sec.axis = sec_axis(
-      trans = ~ exp(.),  # 次坐标轴转换回实际年薪
+      trans = ~ exp(.), # 次坐标轴转换回实际年薪
       name = "年薪（万元）",
       breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
       labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
@@ -914,17 +887,16 @@ ggplot(data_raw, aes(x = 福利状态, y = log_salary, fill = 福利状态)) +
 福利状态的图表分析结果如下：
 
 1. 福利提供比例分析：
-	- 从饼图中可以看出，未提供福利的职位占比为59.7%，超过一半的职位没有提供明确的福利。
+ - 从饼图中可以看出，未提供福利的职位占比为59.7%，超过一半的职位没有提供明确的福利。
 2. 福利状态与薪资分布的小提琴图：
-	- 从小提琴图可以观察到：
-	- 提供福利的职位在薪资分布上呈现出较高的集中度和更长的高薪尾部，这表明提供福利的职位总体薪资水平更高。
-	- 未提供福利的职位薪资分布相对集中于低薪范围，尾部的高薪占比较少，表明未提供福利的职位薪资水平普遍较低。
-	- 小提琴图中箱线图部分进一步展示了两组职位的中位数和四分位间距的对比：提供福利的职位中位数明显高于未提供福利的职位。
-	
+ - 从小提琴图可以观察到：
+ - 提供福利的职位在薪资分布上呈现出较高的集中度和更长的高薪尾部，这表明提供福利的职位总体薪资水平更高。
+ - 未提供福利的职位薪资分布相对集中于低薪范围，尾部的高薪占比较少，表明未提供福利的职位薪资水平普遍较低。
+ - 小提琴图中箱线图部分进一步展示了两组职位的中位数和四分位间距的对比：提供福利的职位中位数明显高于未提供福利的职位。
+ 
 
 ### x4=工作经验
 ```{r}
-
 # 描述性统计
 work_experience_summary <- data_raw %>%
   group_by(已有工作经验) %>%
@@ -948,7 +920,7 @@ p_frequency <- ggplot(work_experience_summary, aes(x = reorder(已有工作经�
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -963,9 +935,9 @@ print(p_frequency)
 ```{r}
 # 绘制"已有工作经验"的小提琴图 + 箱线图
 p_experience_salary <- ggplot(data_raw, aes(x = factor(已有工作经验, levels = c("经验不限", "1年以内", "1-3年", "3-5年", "5年以上")), y = log(年薪))) +
-  geom_violin(fill = "#85C1E9", alpha = 0.7, width = 0.8, scale = "width") +  # 小提琴图
-  geom_boxplot(width = 0.2, fill = "white", alpha = 0.6, outlier.shape = NA) +  # 箱线图
-  
+  geom_violin(fill = "#85C1E9", alpha = 0.7, width = 0.8, scale = "width") + # 小提琴图
+  geom_boxplot(width = 0.2, fill = "white", alpha = 0.6, outlier.shape = NA) + # 箱线图
+
   labs(
     title = "已有工作经验与薪资分布",
     subtitle = "基于对数转换后的年薪",
@@ -974,7 +946,7 @@ p_experience_salary <- ggplot(data_raw, aes(x = factor(已有工作经验, level
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     plot.subtitle = element_text(size = 14, hjust = 0.5, color = "#5DADE2"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -987,18 +959,18 @@ print(p_experience_salary)
 ```
 
 1. 已有工作经验的职位数量分布（柱状图）
-	- 职位需求集中在”经验不限”（3862个）和”1-3年”（2999个），占主导。
-	- 高经验职位（3年以上）需求量少，但薪资显著提升。
+ - 职位需求集中在”经验不限”（3862个）和”1-3年”（2999个），占主导。
+ - 高经验职位（3年以上）需求量少，但薪资显著提升。
 2. 已有工作经验与薪资分布（小提琴箱线图）
-	- 薪资水平与经验正相关：经验越多，中位数和平均薪资越高。
-	- 分布特征：
-	- “经验不限”和”1年以内”薪资集中在低位，范围较窄。
-	- “1-3年”薪资分布扩大，出现高薪职位。
-	- “3-5年”和”5年以上”薪资范围显著增大，高薪占比明显。
+ - 薪资水平与经验正相关：经验越多，中位数和平均薪资越高。
+ - 分布特征：
+ - “经验不限”和”1年以内”薪资集中在低位，范围较窄。
+ - “1-3年”薪资分布扩大，出现高薪职位。
+ - “3-5年”和”5年以上”薪资范围显著增大，高薪占比明显。
 3. 综合结论
-	- 职位需求：市场更偏向低经验岗位，但薪资相对较低。
-	- 薪资规律：工作经验显著提升薪资，特别是5年以上职位薪资范围和上限均扩大。
-	
+ - 职位需求：市场更偏向低经验岗位，但薪资相对较低。
+ - 薪资规律：工作经验显著提升薪资，特别是5年以上职位薪资范围和上限均扩大。
+ 
 ### x5=学历
 
 ```{r}
@@ -1020,10 +992,10 @@ education_summary <- data_raw %>%
     count = n()
   ) %>%
   mutate(
-    proportion = count / sum(count),  # 计算比例
-    学历 = factor(学历, levels = c("学历不限", "高中及以下", "大专", "本科", "研究生"))  # 指定排序
+    proportion = count / sum(count), # 计算比例
+    学历 = factor(学历, levels = c("学历不限", "高中及以下", "大专", "本科", "研究生")) # 指定排序
   ) %>%
-  arrange(学历)  # 根据因子排序
+  arrange(学历) # 根据因子排序
 
 # 绘制饼图
 p_education_pie <- ggplot(education_summary, aes(x = "", y = proportion, fill = 学历)) +
@@ -1035,7 +1007,7 @@ p_education_pie <- ggplot(education_summary, aes(x = "", y = proportion, fill = 
   ) +
   theme_void() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 16, face = "bold", hjust = 0.5, color = "#0056b3"),
     legend.title = element_text(size = 12, face = "bold", color = "#0056b3"),
     legend.text = element_text(size = 10, color = "#666666")
@@ -1043,13 +1015,13 @@ p_education_pie <- ggplot(education_summary, aes(x = "", y = proportion, fill = 
   scale_fill_manual(values = c("#85C1E9", "#5DADE2", "#4A90E2", "#2874A6", "#154360")) +
   geom_text(
     aes(
-      label = paste0(round(proportion * 100, 1), "%"), 
-      y = cumsum(proportion) - proportion / 2  # 调整标注位置
+      label = paste0(round(proportion * 100, 1), "%"),
+      y = cumsum(proportion) - proportion / 2 # 调整标注位置
     ),
-    nudge_x = 0.8,  # 将标注放在饼图外部
-    family = "STSongti-SC-Black",
+    nudge_x = 0.8, # 将标注放在饼图外部
+    family = theme_font,
     size = 4,
-    color = "#154360"  # 标注颜色
+    color = "#154360" # 标注颜色
   )
 
 # 打印饼图
@@ -1088,7 +1060,7 @@ p_education_region <- ggplot(education_region, aes(x = 位置, y = proportion, f
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 16, face = "bold", hjust = 0.5, color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -1126,9 +1098,9 @@ data_raw$学历 <- factor(data_raw$学历, levels = education_levels)
 
 # 绘制学历与对数年薪的联合图（小提琴图 + 箱线图）
 p_education_salary <- ggplot(data_raw, aes(x = 学历, y = log_salary, fill = 学历)) +
-  geom_violin(trim = TRUE, alpha = 0.7, color = "black") +  # 小提琴图
-  geom_boxplot(width = 0.1, color = "black", outlier.shape = NA, alpha = 0.8) +  # 箱线图
-  
+  geom_violin(trim = TRUE, alpha = 0.7, color = "black") + # 小提琴图
+  geom_boxplot(width = 0.1, color = "black", outlier.shape = NA, alpha = 0.8) + # 箱线图
+
   labs(
     title = "学历与薪资的分布",
     subtitle = "基于对数转换后的年薪",
@@ -1137,14 +1109,14 @@ p_education_salary <- ggplot(data_raw, aes(x = 学历, y = log_salary, fill = �
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 16, face = "bold", hjust = 0.5, color = "#0056b3"),
     plot.subtitle = element_text(size = 14, hjust = 0.5, color = "#5DADE2"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.text.x = element_text(size = 12, color = "#666666"),
     axis.text.y = element_text(size = 12, color = "#666666"),
-    legend.position = "none"  # 去掉图例
+    legend.position = "none" # 去掉图例
   ) +
   scale_fill_manual(
     values = c(
@@ -1155,11 +1127,11 @@ p_education_salary <- ggplot(data_raw, aes(x = 学历, y = log_salary, fill = �
       "研究生" = "#154360"
     )
   ) +
- scale_y_continuous(
-    breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
+  scale_y_continuous(
+    breaks = scales::pretty_breaks(n = 6), # 主坐标轴等间隔视觉距离
     labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
     sec.axis = sec_axis(
-      trans = ~ exp(.),  # 次坐标轴转换回实际年薪
+      trans = ~ exp(.), # 次坐标轴转换回实际年薪
       name = "年薪（万元）",
       breaks = exp(scales::pretty_breaks(n = 6)(range(data_raw$log_salary))),
       labels = function(x) format(round(x), scientific = FALSE, big.mark = ",")
@@ -1201,7 +1173,7 @@ p_industry_frequency <- ggplot(industry_summary, aes(x = reorder(公司行业, -
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -1209,7 +1181,7 @@ p_industry_frequency <- ggplot(industry_summary, aes(x = reorder(公司行业, -
     axis.text.y = element_text(size = 12, color = "#666666"),
     panel.grid.major.y = element_line(color = "#E6E6E6"),
     panel.grid.minor = element_blank(),
-    plot.margin = unit(c(0.5, 0, 0, 1), "cm")  # 增加上下左右边距
+    plot.margin = unit(c(0.5, 0, 0, 1), "cm") # 增加上下左右边距
   )
 
 print(p_industry_frequency)
@@ -1217,9 +1189,9 @@ print(p_industry_frequency)
 
 ```{r}
 # 小提琴图 + 箱线图（公司行业）
-p_industry_combined <- ggplot(data_raw, aes(x = reorder(公司行业, -log_年薪, FUN = median), y = log_年薪)) +
-  geom_violin(fill = "#85C1E9", alpha = 0.7, width = 0.8, scale = "width") +  # 小提琴图
-  geom_boxplot(width = 0.2, fill = "white", alpha = 0.6, outlier.shape = NA) +  # 箱线图
+p_industry_combined <- ggplot(data_raw, aes(x = reorder(公司行业, -log_salary, FUN = median), y = log_salary)) +
+  geom_violin(fill = "#85C1E9", alpha = 0.7, width = 0.8, scale = "width") + # 小提琴图
+  geom_boxplot(width = 0.2, fill = "white", alpha = 0.6, outlier.shape = NA) + # 箱线图
   labs(
     title = "不同公司行业的薪资分布",
     x = "公司行业",
@@ -1227,7 +1199,7 @@ p_industry_combined <- ggplot(data_raw, aes(x = reorder(公司行业, -log_年�
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -1281,7 +1253,7 @@ p_finance_bar <- ggplot(finance_summary, aes(x = 融资阶段, y = 职位数量,
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -1296,9 +1268,9 @@ print(p_finance_bar)
 ```{r}
 # 小提琴图 + 箱线图（融资阶段）
 p_finance_combined <- ggplot(data_raw, aes(x = factor(融资阶段, levels = c("无需融资", "未融资", "天使轮", "A轮", "B轮", "C轮", "D轮及以上", "已上市", "未知")), y = log(年薪))) +
-  geom_violin(fill = "#85C1E9", alpha = 0.7, width = 0.8, scale = "width") +  # 小提琴图
-  geom_boxplot(width = 0.2, fill = "white", alpha = 0.6, outlier.shape = NA) +  # 箱线图
-  
+  geom_violin(fill = "#85C1E9", alpha = 0.7, width = 0.8, scale = "width") + # 小提琴图
+  geom_boxplot(width = 0.2, fill = "white", alpha = 0.6, outlier.shape = NA) + # 箱线图
+
   labs(
     title = "不同融资阶段的薪资分布",
     x = "融资阶段",
@@ -1306,7 +1278,7 @@ p_finance_combined <- ggplot(data_raw, aes(x = factor(融资阶段, levels = c("
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -1358,7 +1330,7 @@ p_scale_bar <- ggplot(scale_summary, aes(x = 公司规模, y = 职位数量, fil
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -1374,8 +1346,8 @@ print(p_scale_bar)
 ```{r}
 # 小提琴图 + 箱线图（公司规模）
 p_scale_combined <- ggplot(data_raw, aes(x = factor(公司规模, levels = c("100以下", "100-499", "500以上")), y = log(年薪))) +
-  geom_violin(fill = "#85C1E9", alpha = 0.7, width = 0.8, scale = "width") +  # 小提琴图
-  geom_boxplot(width = 0.2, fill = "white", alpha = 0.6, outlier.shape = NA) +  # 箱线图
+  geom_violin(fill = "#85C1E9", alpha = 0.7, width = 0.8, scale = "width") + # 小提琴图
+  geom_boxplot(width = 0.2, fill = "white", alpha = 0.6, outlier.shape = NA) + # 箱线图
   labs(
     title = "不同公司规模的薪资分布",
     x = "公司规模（人）",
@@ -1383,7 +1355,7 @@ p_scale_combined <- ggplot(data_raw, aes(x = factor(公司规模, levels = c("10
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -1422,7 +1394,7 @@ p_category_bar <- ggplot(job_category_summary, aes(x = reorder(职业类别, -�
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
@@ -1437,9 +1409,9 @@ print(p_category_bar)
 
 ```{r}
 # 小提琴图 + 箱线图（职业类别）
-p_category_combined <- ggplot(data_raw, aes(x = reorder(职业类别, -log_年薪, FUN = median), y = log_年薪)) +
-  geom_violin(fill = "#85C1E9", alpha = 0.7, width = 0.8, scale = "width") +  # 小提琴图
-  geom_boxplot(width = 0.2, fill = "white", alpha = 0.6, outlier.shape = NA) +  # 箱线图
+p_category_combined <- ggplot(data_raw, aes(x = reorder(职业类别, -log_salary, FUN = median), y = log_salary)) +
+  geom_violin(fill = "#85C1E9", alpha = 0.7, width = 0.8, scale = "width") + # 小提琴图
+  geom_boxplot(width = 0.2, fill = "white", alpha = 0.6, outlier.shape = NA) + # 箱线图
   labs(
     title = "不同职业类别的薪资分布",
     x = "职业类别",
@@ -1447,7 +1419,7 @@ p_category_combined <- ggplot(data_raw, aes(x = reorder(职业类别, -log_年�
   ) +
   theme_minimal() +
   theme(
-    text = element_text(family = "STSongti-SC-Black"),
+    text = element_text(family = theme_font),
     plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
     axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
     axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
