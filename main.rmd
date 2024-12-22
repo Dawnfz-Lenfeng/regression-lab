@@ -1,6 +1,6 @@
 ---
 title: "职位薪资影响因素分析"
-author: "熊凌峰 20222201752 黄赫堂 2020201415"
+author: "熊凌峰 20222201752 黄赫堂 2020201415 朱峰 2022201611"
 date: "`r Sys.Date()`"
 output: 
   rmdformats::readthedown:

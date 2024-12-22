@@ -1,4 +1,3 @@
-# 描述性统计
 
 
 ## Settings
@@ -104,7 +103,8 @@ font_add(family = "STSongti-SC-Black", regular = "data/STSongti-SC-Black.ttf")  
 ### 1. 读取数据
 
 ```{r}
-data_raw <- read_excel("data/data.xlsx")
+library(readxl)
+data_raw <- read_excel("../data/data.xlsx")
 head(data_raw)
 ```
 
@@ -451,7 +451,7 @@ p_qq <- ggplot(data_raw, aes(sample = log_salary)) +
 print(p_qq)
 
 # 保存图像
-ggsave("log_salary_qqplot.png", plot = p_qq, height = 6, width = 6, dpi = 300)
+#ggsave("log_salary_qqplot.png", plot = p_qq, height = 6, width = 6, dpi = 300)
 ```
 这张QQ图用于检验对数变换后的年薪分布是否符合正态分布。从图中可以观察到，数据点在大部分范围内与虚线（理想正态分布线）较为接近，尤其是在中位数附近，数据点分布较为密集且贴合。这表明对数年薪的数据分布基本符合正态分布假设。
 
@@ -603,7 +603,7 @@ p <- ggplot(data_log,
 print(p)
 
 # 保存图像到文件
-ggsave("1_place_salary_distribution.png", plot = p, height = 5, width = 3, dpi = 300)
+#ggsave("1_place_salary_distribution.png", plot = p, height = 5, width = 3, dpi = 300)
 
 ```
 以下是不同地区薪资分布的分析：
@@ -725,7 +725,7 @@ p2 <- ggplot(data_log,
 
 print(p2)
 # 保存薪资分布图
-ggsave("2_job_salary_distribution.png", plot = p2, height = 5, width = 3, dpi = 300)
+#g g sa v e("2_job_salary_distribution.png", plot = p2, height = 5, width = 3, dpi = 300)
 
 ```
 该图展示了不同职位的薪资分布（基于对数转换后的年薪），分析如下：
@@ -803,7 +803,7 @@ p3 <- ggplot(filtered_data,
 print(p3)
 
 # 保存薪资分布图
-ggsave("2_job_salary_distribution_top_bottom.png", plot = p3, height = 8, width = 6, dpi = 300)
+#ggsave("2_job_salary_distribution_top_bottom.png", plot = p3, height = 8, width = 6, dpi = 300)
 ```
 图中展示了薪资分布中前 10 和后 10 职位的对数年薪分布情况：
 	1.	高薪职位（前 10）：
@@ -880,7 +880,7 @@ p4 <- ggplot(welfare_summary, aes(x = "", y = 比例, fill = 福利状态)) +
 print(p4)
 
 # 保存饼图
-ggsave("3_welfare_pie_chart.png", plot = p4, height = 6, width = 6, dpi = 300)
+#ggsave("3_welfare_pie_chart.png", plot = p4, height = 6, width = 6, dpi = 300)
 ```
 
 ```{r}
@@ -982,7 +982,7 @@ p_frequency <- ggplot(work_experience_summary, aes(x = reorder(已有工作经�
 print(p_frequency)
 
 # 保存频次分布图
-ggsave("work_experience_frequency.png", plot = p_frequency, height = 6, width = 8, dpi = 300)
+#ggsave("work_experience_frequency.png", plot = p_frequency, height = 6, width = 8, dpi = 300)
 ```
 ```{r}
 # 绘制"已有工作经验"的小提琴图 + 箱线图
@@ -1080,7 +1080,7 @@ p_education_pie <- ggplot(education_summary, aes(x = "", y = proportion, fill = 
 print(p_education_pie)
 
 # 保存饼图
-ggsave("education_pie_no_guidelines.png", plot = p_education_pie, height = 6, width = 8, dpi = 300)
+#ggsave("education_pie_no_guidelines.png", plot = p_education_pie, height = 6, width = 8, dpi = 300)
 ```
 
 
@@ -1139,7 +1139,7 @@ p_education_region <- ggplot(education_region, aes(x = 位置, y = proportion, f
 print(p_education_region)
 
 # 保存图像
-ggsave("education_region_distribution.png", plot = p_education_region, height = 8, width = 12, dpi = 300)
+#ggsave("education_region_distribution.png", plot = p_education_region, height = 8, width = 12, dpi = 300)
 ```
 
 学历分布比例
@@ -1201,7 +1201,7 @@ p_education_salary <- ggplot(data_log, aes(x = 学历, y = log_salary, fill = �
 print(p_education_salary)
 
 # 保存图像
-ggsave("education_salary_violin.png", plot = p_education_salary, height = 8, width = 12, dpi = 300)
+#ggsave("education_salary_violin.png", plot = p_education_salary, height = 8, width = 12, dpi = 300)
 ```
 学历与薪资的分布
 1.从小提琴图中可以看出，不同学历对薪资的影响存在显著差异。学历越高，对数薪资的分布整体向右偏移，说明高学历职位的薪资中位数和分布上限均更高。
