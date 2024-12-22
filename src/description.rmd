@@ -524,33 +524,32 @@ ggplot(top_cities, aes(x = reorder(位置, 职位数量), y = 职位数量)) +
 
 
 
-```{r, fig.height=15, fig.width=8, echo=FALSE}
+```{r}
 p <- ggplot(
   data_raw,
   aes(x = reorder(位置, log_salary, FUN = median), y = log_salary)
 ) +
-  geom_boxplot(fill = "#85C1E9", alpha = 0.7, outlier.shape = NA) + # 去掉离群点
-  geom_jitter(width = 0.2, alpha = 0.2, color = "#5DADE2", size = 0.8) + # 添加散点
-  coord_flip() + # 翻转坐标轴
+  geom_boxplot(fill = "#85C1E9", alpha = 0.7, outlier.shape = NA, width = 0.7) +  # 去掉离群点
+  geom_jitter(width = 0.2, alpha = 0.2, color = "#5DADE2", size = 0.8) +  # 添加散点
+  coord_flip() +
   labs(
     title = "五大地区的薪资分布",
     subtitle = "基于对数转换后的年薪",
     x = "位置",
     y = "对数年薪"
   ) +
-  theme_minimal() +
   theme(
-    text = element_text(family = theme_font),
-    plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
-    plot.subtitle = element_text(size = 14, hjust = 0.5, color = "#5DADE2"),
-    axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
-    axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
-    axis.text.x = element_text(size = 12, color = "#666666"),
-    axis.text.y = element_text(size = 10, color = "#666666"),
-    panel.grid.major.y = element_line(color = "#E6E6E6"),
-    panel.grid.major.x = element_line(color = "#E6E6E6"),
-    panel.grid.minor = element_blank()
-  ) +
+  text = element_text(family = "STSongti-SC-Black"),
+  plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#0056b3"),
+  axis.title.x = element_text(size = 14, face = "bold", color = "#0056b3"),
+  axis.title.y = element_text(size = 14, face = "bold", color = "#0056b3"),
+  axis.text.x = element_text(size = 10, color = "#666666"),
+  axis.text.y = element_text(size = 10, color = "#666666"),
+  panel.background = element_blank(),  # 移除面板背景
+  plot.background = element_blank(),   # 移除整体背景
+  panel.grid.major = element_line(color = "#E6E6E6"), # 主网格线颜色
+  panel.grid.minor = element_blank()  # 移除次网格线
+) +
   scale_y_continuous(
     breaks = scales::pretty_breaks(n = 6),  # 主坐标轴等间隔视觉距离
     labels = scales::number_format(accuracy = 0.1), # 对数坐标标签
@@ -562,8 +561,8 @@ p <- ggplot(
     )
   )
 
-# 打印图像到绘图窗口
 print(p)
+```
 ```
 
 从不同地区薪资分布图中可以看出：
